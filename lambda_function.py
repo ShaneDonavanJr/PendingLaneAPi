@@ -52,12 +52,12 @@ def lambda_handler(event, context):
       "_id": 0,
       "customerId": 1,
       "truckType": 1,
-      "comments": 1, 
       "carriers.carrier_name": 1,
       "carriers.carrier_mc": 1,
       "carriers.contact_name": 1,
       "carriers.contact_email": 1,
-      "carriers.contact_phone": 1
+      "carriers.contact_phone": 1,
+      "carriers.carrier_comments": 1
     }
     )
 
@@ -80,7 +80,7 @@ def lambda_handler(event, context):
                     "numberOfTrucks": 0,  # Assuming number of trucks is not provided, leave as 0
                     "equipmentType": entry['truckType'],
                     "dedicated": dedicated,  # Assuming "dedicated" is false unless stated otherwise
-                    "comments": entry['comments'],
+                    "comments": carrier['carrier_comments'],
                     "contacts": [{
                         "name": carrier['contact_name'],
                         "phone": carrier['contact_phone'].strip(),

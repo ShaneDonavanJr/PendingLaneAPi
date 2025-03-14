@@ -1,10 +1,23 @@
 import json
 from pymongo import MongoClient
 
+""" 
+
+To make a package for the lamda function
+pip install pymongo -t ./package 
+
+"""
+
 def lambda_handler(event, context):
     MONGO_URL = "mongodb+srv://shane-compass:Gi98VaSEbG3KG3lW@circle-alldata.ok8naze.mongodb.net/?retryWrites=true&w=majority"
 
-    body = json.loads(event['body'])
+    # Check if the event body is already a dictionary, or if it needs to be parsed
+    # if isinstance(event['body'], str):
+    #     body = json.loads(event['body'])  # Parse the body if it's a string
+    # else:
+    #     body = event['body']  # Use it directly if it's already a dictionary
+
+    body = event
 
     # Connect to MongoDB
     client = MongoClient(MONGO_URL)
@@ -39,12 +52,12 @@ def lambda_handler(event, context):
       "_id": 0,
       "customerId": 1,
       "truckType": 1,
-      "comments": 1, 
       "carriers.carrier_name": 1,
       "carriers.carrier_mc": 1,
       "carriers.contact_name": 1,
       "carriers.contact_email": 1,
-      "carriers.contact_phone": 1
+      "carriers.contact_phone": 1,
+      "carriers.carrier_comments": 1
     }
     )
 
@@ -58,7 +71,7 @@ def lambda_handler(event, context):
         
         for entry in input_data:
             carriers = entry['carriers']
-            dedicated = True if entry['customerId'] == int(dedicated_customer) else False
+            dedicated = True if int(entry['customerId']) == dedicated_customer else False
             for carrier in carriers:
                 carrier_info = {
                     "carrierName": carrier['carrier_name'],
@@ -67,7 +80,7 @@ def lambda_handler(event, context):
                     "numberOfTrucks": 0,  # Assuming number of trucks is not provided, leave as 0
                     "equipmentType": entry['truckType'],
                     "dedicated": dedicated,  # Assuming "dedicated" is false unless stated otherwise
-                    "comments": entry['comments'],
+                    "comments": carrier['carrier_comments'],
                     "contacts": [{
                         "name": carrier['contact_name'],
                         "phone": carrier['contact_phone'].strip(),
